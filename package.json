@@ -1,31 +1,33 @@
 {
-  "name": "export-logs",
-  "version": "1.0.0",
-  "description": "# Porpose Easily n automaticaly export your log data from Cloudwatch to S3.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/GoogleSensei/export-logs.git"
-  },
-  "author": "taylor",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/GoogleSensei/export-logs/issues"
-  },
-  "homepage": "https://github.com/GoogleSensei/export-logs#readme",
-  "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.19.0",
-    "@typescript-eslint/parser": "^2.19.0",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-prettier": "^3.1.2",
-    "prettier": "^1.19.1",
-    "ts-loader": "^6.2.1",
-    "typescript": "^3.7.5"
-  }
+    "name": "export-logs",
+    "version": "1.0.0",
+    "description": "# Porpose Easily n automaticaly export your log data from Cloudwatch to S3.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "lint": "eslint src"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/GoogleSensei/export-logs.git"
+    },
+    "author": "taylor",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/GoogleSensei/export-logs/issues"
+    },
+    "homepage": "https://github.com/GoogleSensei/export-logs#readme",
+    "dependencies": {
+        "@typescript-eslint/eslint-plugin": "^2.19.0",
+        "@typescript-eslint/parser": "^2.19.0",
+        "aws-sdk": "^2.615.0",
+        "eslint": "^6.8.0",
+        "eslint-config-airbnb-base": "^14.0.0",
+        "eslint-config-prettier": "^6.10.0",
+        "eslint-plugin-import": "^2.20.1",
+        "eslint-plugin-prettier": "^3.1.2",
+        "prettier": "^1.19.1",
+        "ts-loader": "^6.2.1",
+        "typescript": "^3.7.5"
+    }
 }
