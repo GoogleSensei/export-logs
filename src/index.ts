@@ -9,10 +9,11 @@ aws.config.update({ region: 'ap-northeast-1' });
  * @param callback : 呼び出し元サービスへ返す値
  *
  */
-exports.handler = (event, context, callback) => {
-    const cloudwatchlogs = new aws.CloudWatchLogs();
-    const { BucketName } = event;
+exports.handler = (event: object, context, callback) => {
+    const cloudwatchlogs: any = new aws.CloudWatchLogs();
+    const BucketName: string = event;
     const { LogGroupName } = event;
+    const response:
     let params;
     let getToTime = [];
     console.log(`先月の${LogGroupName}のログを${BucketName}へ移行を開始します。`);
@@ -35,11 +36,11 @@ exports.handler = (event, context, callback) => {
     console.log(JSON.stringify(params));
 
     /* logのexport処理 */
-    cloudwatchlogs.createExportTask(params, (err, data) => {
-        let response;
+    cloudwatchlogs.createExportTask(params, (err: error, data: object) => {
+        var response: object;
         if (err) {
             console.log(err, err.stack);
-            response = err.stack;
+            callback(null, err.stack);
         } else {
             console.log(data);
             response = data;
