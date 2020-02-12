@@ -1,16 +1,39 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-
 Resources:
   ExportManagerFunction:
     Type: AWS::Serverless::Function
-    Properties:
-      Handler: index.handler
-      Runtime: nodejs12.x
-      Policies: {$your own role or create of below}
-
-      // lambda's valiables. you can change you hope for s3 naming
-      Environment:
-        Variables:
+    Handler: "index.handler"
+    Runtime: "nodejs12.x"
+    Properties: 
+      Code: 
+        S3Bucket: "{$bucket name}"
+        S3Key: "{$path}/{$file}}" # path
+      Environment: 
+      # lambda's valiables. you can change you hope for s3 naming
+        Variables: 
           DestinationPrefix: process
           TaskName: export_task
+      MemorySize: 128
+      Role: {$your own role or create here}
+      Timeout: 30
+
+  CloudWatchEvents: # ここに必要数追加していく
+    Type: AWS::Events::Rule
+    Properties: 
+      Description: "Kick Lambda"
+      Name: "{$rule name}"
+      ScheduleExpression: "cron(0 12 1 * ? *)"
+      State: DISABLED
+      Targets:
+        - Arn: !GetAtt Lambda.Arn
+          Id: "export-CWL-data-to-S3"
+
+  # LambdaのTriggerを宣言、CWEは複数
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref Lambda
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt CloudWatchEvents.Arn
