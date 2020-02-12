@@ -9,3 +9,5 @@ Easily n automaticaly export your log data from Cloudwatch to S3.
 
 # Uses
 - Cloudformation
+
+changed auther
