@@ -14,7 +14,7 @@ exports.handler = (event: object, context, callback) => {
     const BucketName: string = event;
     const { LogGroupName } = event;
     const response:
-    let params;
+    let params;　
     let getToTime = [];
     console.log(`先月の${LogGroupName}のログを${BucketName}へ移行を開始します。`);
     getToTime = getTimeData();
