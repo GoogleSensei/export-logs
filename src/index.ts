@@ -7,7 +7,7 @@ aws.config.update({ region: 'ap-northeast-1' });
  * @param event : 呼び出し元サービスから渡される値
  * @param context : AWS側の各種情報
  * @param callback : 呼び出し元サービスへ返す値
- *
+ * test
  */
 exports.handler = (event: object, context, callback) => {
     const cloudwatchlogs: any = new aws.CloudWatchLogs();
