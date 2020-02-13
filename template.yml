@@ -7,27 +7,27 @@ Resources:
     Runtime: "nodejs12.x"
     Properties: 
       Code: 
-        S3Bucket: "{$bucket name}"
-        S3Key: "{$path}/{$file}}" # path
+        S3Bucket: "googlesensei-logger-bucket"
+        S3Key: "Lambda/export-lambda.zip" # path
       Environment: 
       # lambda's valiables. you can change you hope for s3 naming
         Variables: 
           DestinationPrefix: process
           TaskName: export_task
       MemorySize: 128
-      Role: {$your own role or create here}
+      Role: "tmp-role-for-export-lambda"
       Timeout: 30
 
   CloudWatchEvents: # ここに必要数追加していく
     Type: AWS::Events::Rule
     Properties: 
       Description: "Kick Lambda"
-      Name: "{$rule name}"
+      Name: "Kick-every-month"
       ScheduleExpression: "cron(0 12 1 * ? *)"
       State: DISABLED
       Targets:
-        - Arn: !GetAtt Lambda.Arn
-          Id: "export-CWL-data-to-S3"
+          Arn: !GetAtt Lambda.Arn
+          Id: "ExportManagerFunction"
 
   # LambdaのTriggerを宣言、CWEは複数
   LambdaInvokePermission:
