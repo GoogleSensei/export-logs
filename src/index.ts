@@ -1,4 +1,5 @@
 import * as aws from 'aws-sdk';
+import { Context, Callback } from 'aws-lambda';
 
 aws.config.update({ region: 'ap-northeast-1' });
 
@@ -9,22 +10,24 @@ aws.config.update({ region: 'ap-northeast-1' });
  * @param callback : 呼び出し元サービスへ返す値
  * test
  */
-exports.handler = (event: object, context, callback) => {
+exports.handler = (event: any, context: Context, callback: Callback) => {
+    // console.log('Context : ' + JSON.stringify(context));
+
     const cloudwatchlogs: any = new aws.CloudWatchLogs();
-    const BucketName: string = event;
-    const { LogGroupName } = event;
-    const response:
-    let params;　
-    let getToTime = [];
+    // eventからバケットネームをセットする
+    const BucketName: string = event.bucketName;
+    const LogGroupName: string = event.logs;
+    const respomse: any;
+
     console.log(`先月の${LogGroupName}のログを${BucketName}へ移行を開始します。`);
-    getToTime = getTimeData();
+    const getToTime = getTimeData();
 
     /*
    "destination"で設定したS3バケットに、"destinationPrefix"で設定したフォルダを作り、
    "logGroupName"で設定したCludWatchのロググループのlogをexportする。
    exportするlogの範囲は、"from"から"to"で設定した範囲。
   */
-    params = {
+    const params = {
         'destination': BucketName,
         'from': getToTime[0],
         'to': getToTime[1],
@@ -37,7 +40,7 @@ exports.handler = (event: object, context, callback) => {
 
     /* logのexport処理 */
     cloudwatchlogs.createExportTask(params, (err: error, data: object) => {
-        var response: object;
+        this.response: object;
         if (err) {
             console.log(err, err.stack);
             callback(null, err.stack);

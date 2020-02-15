@@ -18,6 +18,8 @@
     },
     "homepage": "https://github.com/GoogleSensei/export-logs#readme",
     "dependencies": {
+        "@types/aws-lambda": "^8.10.41",
+        "@types/node": "^13.7.1",
         "@typescript-eslint/eslint-plugin": "^2.19.0",
         "@typescript-eslint/parser": "^2.19.0",
         "aws-sdk": "^2.615.0",
