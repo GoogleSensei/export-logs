@@ -1,5 +1,6 @@
 import * as aws from 'aws-sdk';
 import { Context, Callback } from 'aws-lambda';
+import { CloudWatchEventsRequest } from './constants/cloudWatchEvent';
 
 aws.config.update({ region: 'ap-northeast-1' });
 
@@ -10,7 +11,7 @@ aws.config.update({ region: 'ap-northeast-1' });
  * @param callback : 呼び出し元サービスへ返す値
  * test
  */
-exports.handler = (event: any, context: Context, callback: Callback) => {
+exports.handler = (event: CloudWatchEventsRequest, context: Context, callback: Callback) => {
     console.log(`event: ${event}`);
     console.log(`event: ${context}`);
     console.log(`event: ${callback}`);
@@ -31,7 +32,7 @@ exports.handler = (event: any, context: Context, callback: Callback) => {
     const params: aws.CloudWatchLogs.CreateExportTaskRequest = {
         taskName: `${process.env.TaskName}/${getToTime[2]}`,
         logGroupName,
-        from: getToTime[0],
+        from: getToTime[0], // 肩を揃える必要がある
         to: getToTime[1],
         destination: bucketName,
         destinationPrefix: `${process.env.DestinationPrefix}/${getToTime[2]}`,
