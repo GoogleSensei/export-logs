@@ -1,6 +1,6 @@
 import * as aws from 'aws-sdk';
 import { Context, Callback } from 'aws-lambda';
-import { CloudWatchEventsRequest } from './constants/cloudWatchEvent';
+import { CloudWatchEventsRequest, ExportTaskRequest } from './constants/cloudWatchEvent';
 
 aws.config.update({ region: 'ap-northeast-1' });
 
@@ -64,26 +64,58 @@ exports.handler = (event: CloudWatchEventsRequest, context: Context, callback: C
  *
  */
 
+// function getTimeData() {
+//     console.log('対象の日付を抽出します。');
+//     const arr = [];
+//     const fulldate = new Date();
+//     const year = fulldate.getFullYear();
+//     const month = fulldate.getMonth();
+
+//     // 先月の1日と最終日を作成
+//     const firstDayOfLastMonth = new Date(year, month - 1, 1);
+//     const lastDayOfLastMonth = new Date(year, month, 0);
+
+//     lastDayOfLastMonth.setHours(23);
+//     lastDayOfLastMonth.setMinutes(59);
+//     lastDayOfLastMonth.setSeconds(59);
+//     lastDayOfLastMonth.setMilliseconds(999);
+
+//     console.log(firstDayOfLastMonth);
+//     console.log(lastDayOfLastMonth);
+
+//     arr.push(firstDayOfLastMonth.getTime(), lastDayOfLastMonth.getTime(), fulldate);
+
+//     return arr;
+// }
+
 function getTimeData() {
     console.log('対象の日付を抽出します。');
-    const arr = [];
-    const fulldate = new Date();
-    const year = fulldate.getFullYear();
-    const month = fulldate.getMonth();
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
 
     // 先月の1日と最終日を作成
-    const firstDayOfLastMonth = new Date(year, month - 1, 1);
-    const lastDayOfLastMonth = new Date(year, month, 0);
+    const firstDate = new Date(year, month - 1, 1);
+    const lastDate = new Date(year, month, 0);
 
-    lastDayOfLastMonth.setHours(23);
-    lastDayOfLastMonth.setMinutes(59);
-    lastDayOfLastMonth.setSeconds(59);
-    lastDayOfLastMonth.setMilliseconds(999);
+    lastDate.setHours(23);
+    lastDate.setMinutes(59);
+    lastDate.setSeconds(59);
+    lastDate.setMilliseconds(999);
 
-    console.log(firstDayOfLastMonth);
-    console.log(lastDayOfLastMonth);
+    console.log(firstDate);
+    console.log(lastDate);
 
-    arr.push(firstDayOfLastMonth.getTime(), lastDayOfLastMonth.getTime(), fulldate);
+    // exchange date to time
+    const firstTime = firstDate.getTime();
+    const lastTime = lastDate.getTime();
+    const currentTime = firstDate.getTime();
 
-    return arr;
+    const data: ExportTaskRequest = {
+        firstTime,
+        lastTime,
+        currentTime,
+    };
+
+    return data;
 }
