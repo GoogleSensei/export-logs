@@ -1,6 +1,7 @@
 import * as aws from 'aws-sdk';
 import { Context, Callback } from 'aws-lambda';
 import { CloudWatchEventsRequest, ExportTaskRequest } from './constants/cloudWatchEvent';
+import { CloudWatchLogs } from 'aws-sdk';
 
 aws.config.update({ region: 'ap-northeast-1' });
 
@@ -16,13 +17,13 @@ exports.handler = (event: CloudWatchEventsRequest, context: Context, callback: C
     console.log(`event: ${context}`);
     console.log(`event: ${callback}`);
 
-    const cloudwatchlogs: object = new aws.CloudWatchLogs();
     // eventからS3bucketと対象のロググループ名を抜き出す
     const { bucketName } = event;
     const { logGroupName } = event;
 
+    const cloudwatchlogs = new aws.CloudWatchLogs;
     console.log(`先月の${logGroupName}のログを${bucketName}へ移行を開始します。`);
-    const getToTime = getTimeData();
+    const requestData: ExportTaskRequest = getTimeData();
 
     /*
    "destination"で設定したS3バケットに、"destinationPrefix"で設定したフォルダを作り、
@@ -30,30 +31,29 @@ exports.handler = (event: CloudWatchEventsRequest, context: Context, callback: C
    exportするlogの範囲は、"from"から"to"で設定した範囲。
   */
     const params: aws.CloudWatchLogs.CreateExportTaskRequest = {
-        taskName: `${process.env.TaskName}/${getToTime[2]}`,
+        taskName: `${process.env.TaskName}/${requestData.currentTime}`,
         logGroupName,
-        from: getToTime[0], // 肩を揃える必要がある
-        to: getToTime[1],
+        from: requestData.firstTime, // 肩を揃える必要がある
+        to: requestData.lastTime,
         destination: bucketName,
-        destinationPrefix: `${process.env.DestinationPrefix}/${getToTime[2]}`,
+        destinationPrefix: `${process.env.DestinationPrefix}/${requestData.currentTime}`,
     };
 
     console.log(JSON.stringify(params));
 
     /* logのexport処理 */
-    aws.CloudWatchLogs.CreateExportTask(
-        params,
-        (err: aws.AWSError, data: aws.CloudWatchLogs.Types.CreateExportTaskResponse) => {
-            if (err) {
-                console.log(err, err.stack);
-                callback(null, err.stack);
-            } else {
-                console.log(data);
-                this.response = data;
-            }
-            callback(null, response);
-        }
-    );
+     cloudwatchlogs.createExportTask(
+         params,
+         (err: aws.AWSError, data: aws.CloudWatchLogs.Types.CreateExportTaskResponse) => {
+             if (err) {
+                 console.log(err, err.stack);
+                 callback(null, err.stack);
+             } else {
+                 console.log(data);
+             }
+             callback(null, data);
+         }
+     );
 };
 
 /**
