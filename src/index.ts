@@ -1,7 +1,6 @@
 import * as aws from 'aws-sdk';
 import { Context, Callback } from 'aws-lambda';
 import { CloudWatchEventsRequest, ExportTaskRequest } from './constants/cloudWatchEvent';
-import { CloudWatchLogs } from 'aws-sdk';
 
 aws.config.update({ region: 'ap-northeast-1' });
 
@@ -14,16 +13,17 @@ aws.config.update({ region: 'ap-northeast-1' });
  */
 exports.handler = (event: CloudWatchEventsRequest, context: Context, callback: Callback) => {
     console.log(`event: ${event}`);
-    console.log(`event: ${context}`);
-    console.log(`event: ${callback}`);
+    console.log(`context: ${context}`);
+    console.log(`callback: ${callback}`);
 
     // eventからS3bucketと対象のロググループ名を抜き出す
     const { bucketName } = event;
     const { logGroupName } = event;
 
     const cloudwatchlogs = new aws.CloudWatchLogs;
-    console.log(`先月の${logGroupName}のログを${bucketName}へ移行を開始します。`);
     const requestData: ExportTaskRequest = getTimeData();
+
+    console.log(`先月の${logGroupName}のログを${bucketName}へ移行を開始します。`);
 
     /*
    "destination"で設定したS3バケットに、"destinationPrefix"で設定したフォルダを作り、
@@ -33,7 +33,7 @@ exports.handler = (event: CloudWatchEventsRequest, context: Context, callback: C
     const params: aws.CloudWatchLogs.CreateExportTaskRequest = {
         taskName: `${process.env.TaskName}/${requestData.currentTime}`,
         logGroupName,
-        from: requestData.firstTime, // 肩を揃える必要がある
+        from: requestData.firstTime,
         to: requestData.lastTime,
         destination: bucketName,
         destinationPrefix: `${process.env.DestinationPrefix}/${requestData.currentTime}`,
@@ -63,31 +63,6 @@ exports.handler = (event: CloudWatchEventsRequest, context: Context, callback: C
  * @return arr : [from, to, format]
  *
  */
-
-// function getTimeData() {
-//     console.log('対象の日付を抽出します。');
-//     const arr = [];
-//     const fulldate = new Date();
-//     const year = fulldate.getFullYear();
-//     const month = fulldate.getMonth();
-
-//     // 先月の1日と最終日を作成
-//     const firstDayOfLastMonth = new Date(year, month - 1, 1);
-//     const lastDayOfLastMonth = new Date(year, month, 0);
-
-//     lastDayOfLastMonth.setHours(23);
-//     lastDayOfLastMonth.setMinutes(59);
-//     lastDayOfLastMonth.setSeconds(59);
-//     lastDayOfLastMonth.setMilliseconds(999);
-
-//     console.log(firstDayOfLastMonth);
-//     console.log(lastDayOfLastMonth);
-
-//     arr.push(firstDayOfLastMonth.getTime(), lastDayOfLastMonth.getTime(), fulldate);
-
-//     return arr;
-// }
-
 function getTimeData() {
     console.log('対象の日付を抽出します。');
     const currentDate = new Date();
@@ -116,6 +91,7 @@ function getTimeData() {
         lastTime,
         currentTime,
     };
+    console.log(JSON.stringify(data));
 
     return data;
 }
