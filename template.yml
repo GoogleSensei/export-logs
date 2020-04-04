@@ -1,8 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Resources:
+
   ExportManagerFunction:
     Type: AWS::Serverless::Function
+    FunctionName: ExportManagerFunction
     Handler: "index.handler"
     Runtime: "nodejs12.x"
     Properties: 
@@ -12,7 +14,7 @@ Resources:
       Environment: 
       # lambda's valiables. you can change you hope for s3 naming
         Variables: 
-          DestinationPrefix: process
+          DestinationPrefix: process  
           TaskName: export_task
       MemorySize: 128
       Role: "tmp-role-for-export-lambda"
@@ -26,14 +28,15 @@ Resources:
       ScheduleExpression: "cron(0 12 1 * ? *)"
       State: DISABLED
       Targets:
-          Arn: !GetAtt Lambda.Arn
-          Id: "ExportManagerFunction"
+          - 
+            Arn: ！GetAtt ExportManagerFunction.Arn
+            Id: ExportManagerFunction
 
   # LambdaのTriggerを宣言、CWEは複数
   LambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
+      FunctionName: !Ref ExportManagerFunction.Arn
       Action: lambda:InvokeFunction
-      FunctionName: !Ref Lambda
       Principal: events.amazonaws.com
       SourceArn: !GetAtt CloudWatchEvents.Arn
